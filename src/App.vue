@@ -1,30 +1,37 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div class="appBodyPrincipal">
+    <header>
+      <h1>To Do List</h1>
+    </header>
+    <Navbar
+    ></Navbar>
+    
+    <TaskList>
+    </TaskList>
+  </div>
 </template>
+<script>
+import Navbar from './components/NavBar.vue';
+import TaskList from './components/TaskList.vue';
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+export default {
+  components: {
+    Navbar,
+    TaskList
+  }
 }
+</script>
 
-nav {
-  padding: 30px;
+<style scoped>
+.appBodyPrincipal {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
 }
 </style>
