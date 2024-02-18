@@ -16,6 +16,11 @@
             </div>
         </li>
     </ul>
+    <div class="pagChanges">
+        <button class="btn btn-primary" @click="previousPage" :disabled="page === 1">Anterior</button>
+        <span>{{ page }}</span>
+        <button class="btn btn-primary" @click="nextPage" :disabled="tasks.length < pageSize">Siguiente</button>
+    </div>
 </template>
 <script>
 import axios from 'axios';
@@ -23,31 +28,49 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            tasks: []
+            tasks: [],
+            page: 1,
+            pageSize: 5
         };
     },
-    mounted(){
+    mounted() {
         this.getTasks();
     },
     methods: {
         eliminarTarea(index) {
-            this.tareas.splice(index, 1);
+            this.tasks.splice(index, 1);
+            axios.delete(`http://localhost:3000/api/tasks/delete/${this.tasks[index].id}`)
+                .then(response => {
+                    console.log('Tarea eliminada:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error al eliminar tarea:', error);
+                });
         },
         editarTarea(index) {
-            console.log('Editar tarea:', this.tareas[index]);
+            console.log('Editar tarea:', this.tasks[index]);
         },
         completarTarea(index) {
-            console.log('Completar tarea:', this.tareas[index]);
+            console.log('Completar tarea:', this.tasks[index]);
         },
-        getTasks(){
-            axios.get('http://localhost:3000/api/tasksActive')
-            .then(response => {
-                console.log(response.data);
-                this.tasks = response.data;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        getTasks() {
+            axios.get(`http://localhost:3000/api/tasks/pending/?page=${this.page}&pageSize=${this.pageSize}`)
+                .then(response => {
+                    this.tasks = response.data;
+                })
+                .catch(error => {
+                    console.error('Error al obtener tareas:', error);
+                });
+        },
+        previousPage() {
+            if (this.page > 1) {
+                this.page--;
+                this.fetchTasks();
+            }
+        },
+        nextPage() {
+            this.page++;
+            this.fetchTasks();
         }
     },
 };
@@ -59,14 +82,10 @@ body {
     padding: 20px;
 }
 
-/* Encabezado */
-
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
 }
-
-/* Lista de tareas */
 
 .lista-tareas {
     margin-top: 15px;
@@ -115,5 +134,13 @@ h1 {
     font-size: 24px;
     margin-left: 10px;
     cursor: pointer;
+}
+
+.pagChanges {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
 }
 </style>
