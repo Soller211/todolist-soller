@@ -1,12 +1,12 @@
 <template>
     <ul class="lista-tareas">
-        <li class="tarea" v-for="(tarea, index) in tareas" :key="index">
+        <li class="tarea" v-for="(task, index) in tasks" :key="index">
             <div class="info-tarea">
-                <h2>{{ tarea.titulo }}</h2>
-                <p>{{ tarea.descripcion }}</p>
+                <h2>{{ task.title }}</h2>
+                <p>{{ task.description }}</p>
                 <div class="meta-tarea">
-                    <span class="fecha-creacion">Creado: {{ tarea.fechaCreacion }}</span>
-                    <span class="fecha-edicion">Editado: {{ tarea.fechaEdicion }}</span>
+                    <span class="fecha-creacion">Created: {{ task.dateCreated }}</span>
+                    <span class="fecha-edicion">Edited: {{ task.dateEdited }}</span>
                 </div>
             </div>
             <div class="acciones-tarea">
@@ -18,38 +18,38 @@
     </ul>
 </template>
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
-            tareas: [
-                {
-                    titulo: 'Título de la tarea 1',
-                    descripcion: 'Descripción de la tarea 1',
-                    fechaCreacion: '15 de enero de 2022',
-                    fechaEdicion: '15 de enero de 2022'
-                },
-                {
-                    titulo: 'Título de la tarea 2',
-                    descripcion: 'Descripción de la tarea 2',
-                    fechaCreacion: '16 de enero de 2022',
-                    fechaEdicion: '16 de enero de 2022'
-                }
-            ]
+            tasks: []
         };
+    },
+    mounted(){
+        this.getTasks();
     },
     methods: {
         eliminarTarea(index) {
             this.tareas.splice(index, 1);
         },
         editarTarea(index) {
-            // Aquí puedes implementar la lógica para editar la tarea
             console.log('Editar tarea:', this.tareas[index]);
         },
         completarTarea(index) {
-            // Aquí puedes implementar la lógica para marcar la tarea como completada
             console.log('Completar tarea:', this.tareas[index]);
+        },
+        getTasks(){
+            axios.get('http://localhost:3000/api/tasksActive')
+            .then(response => {
+                console.log(response.data);
+                this.tasks = response.data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
         }
-    }
+    },
 };
 </script>
 <style scoped>
