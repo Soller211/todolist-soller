@@ -1,7 +1,7 @@
 <template>
   <div class="appBodyPrincipal">
     <header>
-      <h1>To Do List</h1>
+      <h3>To Do List</h3>
     </header>
     <Navbar
     ></Navbar>
@@ -24,14 +24,24 @@ export default {
 
 <style scoped>
 .appBodyPrincipal {
+  background-color: white;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
+
+
 header {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
-  padding: 10px;
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+header h3 {
+  margin: 0;
+  font-size: 24px;
+  margin-left: 10px;
 }
 </style>
