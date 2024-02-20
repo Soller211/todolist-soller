@@ -4,9 +4,10 @@
         <teleport to="body">
             <div class="modal" v-if="isOpen">
                 <div>
-                    <h2>Prueba</h2>
-                    <p>texto de Prueba</p>
-                    <button class="btn btn-primary" @click="isOpen = false">Close</button>
+                    <ModalTask 
+                    title="Title" 
+                    msg="Message"
+                />
                 </div>
             </div>
         </teleport>
@@ -14,6 +15,7 @@
 </template>
 <script setup>
 import { ref } from 'vue';
+import ModalTask from './ModalTask.vue';
 
 const isOpen = ref(false);
 </script>
