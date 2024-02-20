@@ -10,9 +10,9 @@
                 </div>
             </div>
             <div class="acciones-tarea">
-                <i class="bi bi-trash3" @click="eliminarTarea(index)" style="color: #c94139;"></i>
-                <i class="bi bi-pencil-fill" @click="editarTarea(index)" style="color: #5589c4;"></i>
-                <i class="bi bi-check-lg" @click="completarTarea(index)" style="color: #2d8f2f;"></i>
+                <i class="bi bi-trash3" @click="deleteTask(index)" style="color: #c94139;"></i>
+                <i class="bi bi-pencil-fill" @click="openEditModal(task)" style="color: #5589c4;"></i>
+                <i class="bi bi-check-lg" @click="completeTask(index)" style="color: #2d8f2f;"></i>
             </div>
         </li>
     </ul>
@@ -21,11 +21,18 @@
         <span>{{ page }}</span>
         <button class="btn btn-primary" @click="nextPage" :disabled="tasks.length < pageSize">Siguiente</button>
     </div>
+    <!-- <TaskEditModal ref="editModal" /> -->
 </template>
 <script>
 import axios from 'axios';
+import TaskEditModal from './TaskEditModal.vue';
+const API_URL = 'http://localhost:3000/api/tasks';
+
 
 export default {
+    components: {
+        TaskEditModal
+    },
     data() {
         return {
             tasks: [],
@@ -34,27 +41,46 @@ export default {
         };
     },
     mounted() {
-        this.getTasks();
+        this.getPendingTasks();
     },
     methods: {
-        eliminarTarea(index) {
-            this.tasks.splice(index, 1);
-            axios.delete(`http://localhost:3000/api/tasks/delete/${this.tasks[index].id}`)
+        deleteTask(index) {
+            axios.delete(`${API_URL}/delete/${this.tasks[index].id}`)
                 .then(response => {
                     console.log('Tarea eliminada:', response.data);
                 })
                 .catch(error => {
                     console.error('Error al eliminar tarea:', error);
                 });
+            let taskDeletedText = `Task deleted: ${this.tasks[index].title}`;
+            this.$swal.fire({
+                title: 'Deleted',
+                text: taskDeletedText,
+                icon: 'error'
+            });
+            this.tasks.splice(index, 1);
         },
-        editarTarea(index) {
+        editTask(index) {
             console.log('Editar tarea:', this.tasks[index]);
         },
-        completarTarea(index) {
-            console.log('Completar tarea:', this.tasks[index]);
+        completeTask(index) {
+            axios.delete(`${API_URL}/complete/${this.tasks[index].id}`)
+                .then(response => {
+                    console.log('Tarea completada:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error al eliminar tarea:', error);
+                });
+            let taskCompleteText = `Task completed: ${this.tasks[index].title}`;
+            this.$swal.fire({
+                title: 'Completed',
+                text: taskCompleteText,
+                icon: 'success'
+            });
+            this.tasks.splice(index, 1);
         },
-        getTasks() {
-            axios.get(`http://localhost:3000/api/tasks/pending/?page=${this.page}&pageSize=${this.pageSize}`)
+        getPendingTasks() {
+            axios.get(`${API_URL}/pending/?page=${this.page}&pageSize=${this.pageSize}`)
                 .then(response => {
                     this.tasks = response.data;
                 })
@@ -65,12 +91,19 @@ export default {
         previousPage() {
             if (this.page > 1) {
                 this.page--;
-                this.fetchTasks();
+                this.getPendingTasks();
             }
         },
         nextPage() {
             this.page++;
-            this.fetchTasks();
+            this.getPendingTasks();
+        },
+        openEditModal(task) {
+            this.$refs.editModal.openModal(task.id, task.title, task.description);
+        },
+        addTask() {
+            // añade una task con el endpoint
+
         }
     },
 };

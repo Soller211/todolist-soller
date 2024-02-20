@@ -18,8 +18,8 @@
             </div>
             <div class="button-group">
                 <div class="tasks-buttons">
-                    <button class="btn btn-primary">Pending Tasks</button>
-                    <button class="btn btn-primary">Complete Tasks</button>
+                    <button @click="fetchPendingTasks" class="btn btn-primary">Pending Tasks</button>
+                    <button @click="fetchCompletedTasks" class="btn btn-primary">Complete Tasks</button>
                 </div>
                 <button class="btn btn-primary">Add Task</button>
             </div>
@@ -27,8 +27,26 @@
     </nav>
 </template>
 <script>
+const API_URL = 'http://localhost:3000/api/tasks';
 export default {
-
+    methods: {
+        async fetchPendingTasks() {
+            try {
+                const response = await axios.get(`${API_URL}/pending`);
+                this.$emit('update-tasks', response.data);
+            } catch (error) {
+                console.error('Error al obtener tareas pendientes:', error);
+            }
+        },
+        async fetchCompletedTasks() {
+            try {
+                const response = await axios.get(`${API_URL}/completed`);
+                this.$emit('update-tasks', response.data);
+            } catch (error) {
+                console.error('Error al obtener tareas completadas:', error);
+            }
+        },
+    }
 }
 </script>
 <style scoped>
